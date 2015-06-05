@@ -45,7 +45,7 @@
 				} else die('Шаблон даты поменялся.');
 				
 				$chunk_cont = substr($content, $f_pos, $s_pos - $f_pos);
-				$art_name = substr($title[1][0],0,strripos($title[1][0],'|'));
+				$art_name = str_replace(array("«","»"),'"',substr($title[1][0],0,strripos($title[1][0],'|')));
 				
 				mb_internal_encoding("UTF-8");				
 			
