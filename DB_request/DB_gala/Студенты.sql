@@ -16,6 +16,7 @@ NOPARALLEL
 BUILD IMMEDIATE 
 REFRESH COMPLETE START WITH TO_DATE('12-5-2015 5:00 PM','DD-MM-YYYY HH12:MI PM') NEXT SYSDATE + 6/24    
 as
+
 select P.fNrec fPersons, P.fFio, P.fStrTabN fTabNmb, P.fSex, A.fVacation||' курс' fCourse,
        to_oradate(P.fBornDate) fBornDate, to_oradate(P.fAppDate) zach, 
        F.fName fak, C.fName||' ('||C.fCode||')' spec, 
@@ -53,13 +54,19 @@ order by  F.fName, C.fName||' ('||C.fCode||')', G.fName, fFio
 
 ------------------------------------------------------------------------Общежития
 select * from Dol_stud
+
 where lower(substr(fio,1,length(replace('Якимчук Александр Васильевич','.',''))))=lower(replace('Якимчук Александр Васильевич','.',''))
  
 -----------------------------------------------------------------------Обучение 
 select * from Dol 
-where lower(substr(fio,1,length(replace(:ffio,'.',''))))=lower(replace(:ffio,'.',''))
+where lower(substr(fio,1,length(replace('Якимчук Александр Васильевич','.',''))))=lower(replace('Якимчук Александр Васильевич','.',''))
 
 -----------------------------------------------------------------Список студентов по группе
+Select * from Dol_stud
+
+Select * from Dol
+
+---------------------------------------------------------------------
 
 select ffio,fsdepcode from U_student 
 where FSDEPCODE='1521б'
