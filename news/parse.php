@@ -6,9 +6,6 @@
    $counter = 0;
    $err_count = 0;
    
-   function clear_tags($n){
-	   return("<p>".trim(strip_tags($n,'<b></b><i></i><u></u><br><br />'))."</p>");
-   }
    
    function add_domain($n){
 	   return('http://www.ugrasu.ru'.$n);
@@ -65,9 +62,17 @@
 						
 						$replace_arr = array("'");
 						
-						if(isset($arr2)){
-							$text_news = strip_tags(str_replace($replace_arr,'"',implode($arr[2])));						
-						} else $text_news=str_replace($replace_arr,"''",implode(array_map("clear_tags",$arr[2])));
+		
+                		$text_news = '';
+						
+						#удаляем пустые абзацы
+						foreach(array_map("stripWhitespaces",$arr[2]) as $p){
+							if(iconv_strlen($p)>2){
+								$text_news.="<p>".$p."</p>";								
+						   }
+						}
+						
+						//$text_news=str_replace($replace_arr,"''",implode(array_map("clear_tags",$arr[2])));
 							
 						
 						if(iconv_strlen($text_news)<=3800){
