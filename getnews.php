@@ -9,9 +9,7 @@
   $s = OCIParse($c,$sql);
   OCIExecute($s, OCI_DEFAULT);
   ocifetchstatement($s, $data_news_arr);
-  /* echo('<pre>');
-  print_r($data_news_arr);
-  echo('</pre>');  */
+  
  //print_r(utf8_json_encode($data_news_arr));
   print_r(str_replace('\/','/',normJsonStr(json_encode($data_news_arr))));
 
