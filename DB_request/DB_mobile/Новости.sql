@@ -30,6 +30,8 @@ PREV_IMG_NEWS VARCHAR2(4000),
 SOURCE_NEWS VARCHAR2(4000)
 )
 ----------------------------------------------------------------------------------
+truncate table continue_links
+/
 truncate table bad_news_links
 /
 truncate table logs
