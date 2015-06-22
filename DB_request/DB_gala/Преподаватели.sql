@@ -40,6 +40,7 @@ select RowNum rn, P.fStrTabn tab, P.fFio fio, V.path prof, A.fRate, A.fCategory,
    --and  P.fFio$up like 'ÁÓÐËÓÖÊÈÉ ÂËÀÄÈÌÈÐ ÂËÀÄÈÌÈÐÎÂÈ×' 
 order by flprizn
 ------------------------------------------------------------------------------------------ÒÅËÅÔÎÍÛ È ÈÕ ÌÅÑÒÀ ÎÁÈÒÀÍÈß(êîíòàêò èíôîðìàöèÿ)
+create or replace view V_CISU_TEAC_TEL as
 
 SELECT ffio$UP fio, c1.fName dol, t.korp, t.kab, com.faddr phone, trim(com.femail) email, com.fnrec id, t.fcparent korp_id, t.fnrec aud_id
 FROM persons p inner join appointments a on a.fperson = p.fnrec 
@@ -57,9 +58,11 @@ FROM persons p inner join appointments a on a.fperson = p.fnrec
  where (A.fDisMissDate = 0 or trunc(to_oradate(A.fDisMissDate)) >= trunc(sysdate))
    and (A.fAppointDate = 0 or trunc(to_oradate(A.fAppointDate)) <= trunc(sysdate))
    and  A.fLprizn = 0       
-   and  p.ffio$UP LIKE 'ÁÓÐËÓÖÊÈÉ ÂËÀÄÈÌÈÐ ÂËÀÄÈÌÈÐÎÂÈ×' 
+   --and  p.ffio$UP LIKE 'ÁÓÐËÓÖÊÈÉ ÂËÀÄÈÌÈÐ ÂËÀÄÈÌÈÐÎÂÈ×' 
    
 ---------------------------------------------------------------------------ÑÎÒÐÓÄÍÈÊÈ ÏÎ ÊÀÔÅÄÐÅ
+Create or replace view V_CISU_TEAC_CAF as
+
 select rownum rn, tab, fio, prof, frate, fcategory, datereg, fname, fbud, stavka, fcinf3, fcref3, fnaikat, decode(flprizn,0,'Îñíîâíîå','Âíóòðåíåå ñîâìåñòèòåëüñòâî') prizn,t.ftarif 
        from tarstav t INNER JOIN
             (select 
@@ -89,11 +92,11 @@ select rownum rn, tab, fio, prof, frate, fcategory, datereg, fname, fbud, stavka
                    ORDER BY fio   
 ---------------------------------------------------------------ÊÎÒÒÅÄÆÈ--îñòàòîê-äàòà îáíîâëåíèÿ
 select * from Dol_kott 
-where lower(substr(fio,1,length(replace(:ffio,'.',''))))=lower(replace(:ffio,'.',''))
+--where lower(substr(fio,1,length(replace('ßêèì÷óê Àëåêñàíäð Âàñèëüåâè÷','.',''))))=lower(replace('ßêèì÷óê Àëåêñàíäð Âàñèëüåâè÷','.',''))
 
 ---------------------------------------------------------------ÎÁÙÅÆÈÒÈß
 select * from Dol_rab 
-where lower(substr(fio,1,length(replace('ßêèì÷óê Àëåêñàíäð Âàñèëüåâè÷','.',''))))=lower(replace('ßêèì÷óê Àëåêñàíäð Âàñèëüåâè÷','.',''))
+--where lower(substr(fio,1,length(replace('ßêèì÷óê Àëåêñàíäð Âàñèëüåâè÷','.',''))))=lower(replace('ßêèì÷óê Àëåêñàíäð Âàñèëüåâè÷','.',''))
 
 -----------------------------------------------------------Ñïèñîê êîðïóñîâ
 
@@ -120,7 +123,7 @@ select count(*)     over (partition by A.fStrTabN, extract (year from to_oradate
                 left outer join Vacations       V on V.fcDetPlanOtp  = DPO.fNrec
                 left outer join FactOtpusk      F on V.fcFactOtpusk  =   F.fNrec
                 left outer join TitleDoc       TD on F.fcPrikaz      =  TD.fNrec
-                
+                                
  -- where lower(substr(P.fFio,1,length(replace(:ffio,'.',''))))=lower(replace(:ffio,'.','')) 
  order by P.fFio, P.fStrTabN, A.fLprizn, extract (year from to_oradate(DPO.fPlanYearBeg)) desc, DPO.fPlanYearBeg
  

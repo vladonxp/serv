@@ -1,4 +1,13 @@
-create synonym mv_stud_appoint for budget.mv_cisu_stud_appoint
+create or replace synonym v_stud_marks for budget.v_cisu_stud_marks
+/
+create or replace synonym v_stud_education for budget.v_cisu_stud_education
+/
+create or replace synonym v_stud_awards for budget.v_cisu_stud_education
+/
+create or replace synonym v_stud_dol for budget.v_cisu_stud_education
+/
+create or replace synonym v_stud_group for budget.v_cisu_stud_education
+
 
 
 create synonym mv_timetable_all for budget.mv_cisu_timetable_all

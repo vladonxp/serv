@@ -1,5 +1,12 @@
 --СТУДЕНТЫ
 
+/-----СДЕЛАТЬ ГРАНТ-----СДЕЛАТЬ ГРАНТ-----СДЕЛАТЬ ГРАНТ-----СДЕЛАТЬ ГРАНТ-----СДЕЛАТЬ ГРАНТ-----СДЕЛАТЬ ГРАНТ
+----grant select on v_cisu_stud_dol to mobile;
+
+---------------------------------------------------------------------------------
+Create synonym Dol_edu for galreport.dol
+---------------------------------------------------------------------
+
 -----------------------------------------------------------------------------Назначение студента
 --переделать академ AO_OTPUSK
 create materialized view mv_cisu_stud_appoint
@@ -53,29 +60,30 @@ where P.fIsemployee  = 'Ю'
 order by  F.fName, C.fName||' ('||C.fCode||')', G.fName, fFio
 
 ------------------------------------------------------------------------Общежития
+create or replace view v_cisu_stud_dol as
 select * from Dol_stud
 
-where lower(substr(fio,1,length(replace('Якимчук Александр Васильевич','.',''))))=lower(replace('Якимчук Александр Васильевич','.',''))
+--Фамилия---where lower(substr(fio,1,length(replace('Якимчук Александр Васильевич','.',''))))=lower(replace('Якимчук Александр Васильевич','.',''))
  
 -----------------------------------------------------------------------Обучение 
-select * from Dol 
-where lower(substr(fio,1,length(replace('Якимчук Александр Васильевич','.',''))))=lower(replace('Якимчук Александр Васильевич','.',''))
+create or replace view v_cisu_stud_education as
+select * from Dol
+---Фамилия---where lower(substr(fio,1,length(replace('Якимчук Александр Васильевич','.',''))))=lower(replace('Якимчук Александр Васильевич','.',''))
 
------------------------------------------------------------------Список студентов по группе
-Select * from Dol_stud
+---------------------------------------------------------------------------------------Список студентов по группе
 
-Select * from Dol
-
----------------------------------------------------------------------
-
+create or replace view v_cisu_stud_group as
 select ffio,fsdepcode from U_student 
-where FSDEPCODE='1521б'
-and to_oradate(fappdate)<=sysdate 
-and (to_oradate(fdisdate)>sysdate or fdisdate=0) order by ffio
-
+Where to_oradate(fappdate)<=sysdate 
+and (to_oradate(fdisdate)>sysdate or fdisdate=0) 
+--номер группы--andFSDEPCODE=''
+order by ffio
 --------------------------------------------------------------СТИПЕНДИИ
 
-select  FFIO,fnVidOpl, to_char(M_1), to_char(M_2),to_char(M_3),to_char(M_4),to_char(M_5),to_char(M_6),to_char(M_7),to_char(M_8),to_char(M_9), to_char(M_10), to_char(M_11), to_char(M_12), to_char(M_13)
+create or replace view v_cisu_stud_awards as
+
+select  FFIO,fnVidOpl, to_char(M_1) January, to_char(M_2) February,to_char(M_3) March,to_char(M_4) April,to_char(M_5) May,to_char(M_6) June,to_char(M_7) July,
+to_char(M_8) August,to_char(M_9) September, to_char(M_10) October, to_char(M_11) November, to_char(M_12) December, to_char(M_13) Itogo 
  from(
 select US.fFio, US.fsFaculty, US.fsPost, US.fsDepcode, US.fsFinsourceName, fVidOpl, decode(GROUPING(fnVidOpl), 1, 'ИТОГО', fnVidOpl) fnVidOpl,
        sum(decode(fMes,  1, fSumma, 0)) M_1,  sum(decode(fMes,  2, fSumma, 0)) M_2,  sum(decode(fMes,  3, fSumma, 0)) M_3,
@@ -90,7 +98,7 @@ select US.fFio, US.fsFaculty, US.fsPost, US.fsDepcode, US.fsFinsourceName, fVidO
                             inner join KlVidOpl     K on SVO.fVidOpl  = K.fVidOplP
          where SVO.fSumma <> 0
            and SVO.fYearK = '2015'
-          and lower(substr(P.ffio,1,length(replace('Якимчук Александр Васильевич','.',''))))=lower(replace('Якимчук Александр Васильевич','.',''))
+        --  and lower(substr(P.ffio,1,length(replace('Якимчук Александр Васильевич','.',''))))=lower(replace('Якимчук Александр Васильевич','.',''))
 
         ) S, U_Student US
  where S.ftPerson = US.fcPersons
@@ -98,7 +106,8 @@ group by rollup((US.fFio, US.fsFaculty, US.fsPost, US.fsDepcode, US.fsFinsourceN
 
 
 
------------------------------------------------------------------------------------------------Оценки-------------------------
+-----------------------------------------------------------------------------------------------Оценки-----------GRAN--------------
+create or replace view v_cisu_stud_marks as
 
 select D.fFio, D.Dis, D.TypeWork,D.FSEMESTER semestr,D.FNAME,
        decode(D.TypeCode, '005',O.Zach, O.fwMark) fwMark
@@ -120,12 +129,13 @@ from U_StudGroup USG inner join U_Curr_Group      UCG  on UCG.fcStGr      = USG.
                                     and UM.fcPersons = P.fNrec) US on US.fcCur = UCC.fNrec                      
 where utw.fwtype in (4,5,14,8)
   and UCC.fwType = 2
+-- and US.Ffio like '%Петроченко%'
  -- and to_char(UCC.fYearEd) = to_char(:GOD) ---ГОД
  -- and UCS.fwSeason        = :SEMESTR --СЕМЕСТР
-  --and trunc(to_oradate(UCS.fdBeg)) <= sysdate
+--and trunc(to_oradate(UCS.fdBeg)) <= sysdate
  --and trunc(to_oradate(UCS.fdEnd)) >= trunc('01.09.2012') дата
-  --and USG.Fname  = '1521б'
---order by UCS.fSemester, UCDC.fCode desc, UD.fName
+ --and USG.Fname  = '1521б'
+ --order by UCS.fSemester, UCDC.fCode desc, UD.fName
 ) D
 left outer join 
 --inner join
@@ -134,6 +144,7 @@ left outer join
  from U_List UL inner join U_Marks      UM on UM.fcList = UL.fNrec
                 inner join U_StudGroup USG on UL.fcStGr = USG.fNrec
            left outer join Catalogs      C on UM.fcMark = C.fNrec
+
  ) O  on D.fcDis      = O.fcDis
      and D.fcStGr     = O.fcStGr
      and D.fcTypeWork = O.fcTypeWork
@@ -143,32 +154,3 @@ left outer join
 order by 1, 3, 2
 
 --------------------------------------------------------------------------------------------------------------------------------
-select distinct 
-       '???????? ??????????????? ???????????<>'||
-       '???????? ?  ??????????? ??????????????? ??????&<>'||
-       '?? '||UCS.fwSeason|| ' ??????? '||
-       to_char(to_oradate(UCK.fdBeg),'YYYY') || '-' || 
-       to_char(to_oradate(UCK.fdEnd),'YYYY') || ' ???????? ???? <>'||
-       F.fName||'<>/>'||
-       US.fName s1
-from U_StudGroup USG inner join U_Curr_Group      UCG  on UCG.fcStGr      = USG.fNrec
-                     inner join U_CurriCulum      UCC  on UCG.fcCurr      = UCC.fNrec
-                     inner join U_Curr_Dis        UCD  on UCD.fcCurr      = UCG.fcCurr
-                     inner join U_Curr_DisContent UCDC on UCDC.fcCurr_dis = UCD.fNrec                     
-                     inner join U_Discipline      UD   on UCD.fcDis       = UD.fNrec
-                     inner join U_Curr_Semester   UCS  on UCDC.fcSemester = UCS.fNrec
-                     inner join U_TypeWork        UTW  on UCDC.fcTypeWork = UTW.fNrec
-                     inner join Catalogs          F    on USG.fcFaculty   = F.fNrec
-                     inner join U_Curr_Course     UCK  on UCS.fcCurr_Course = UCK.fNrec
-                     inner join U_Specialization  US   on UCC.fcSpecialization = US.fNrec
-where utw.fwtype in (4,5,14,8)
-  and UCC.fwType = 2
- -- and to_char(UCC.fYearEd) = to_char(:GOD)
- -- and UCS.fwSeason         = :SEMESTR
---  and trunc(to_oradate(UCS.fdBeg)) <= trunc(:VDATE)
---  and trunc(to_oradate(UCS.fdEnd)) >= trunc(:VDATE)
- -- and UCC.fcSpecialization like case when :PODR like '%e%' then substr(:PODR,1,16)  else '%' end
-union all
-select 'Сводная ведомость успеваемости' s1
-from dual
-order by 1 desc
