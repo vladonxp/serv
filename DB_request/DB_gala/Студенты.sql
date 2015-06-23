@@ -1,10 +1,14 @@
 --СТУДЕНТЫ
 
 /-----СДЕЛАТЬ ГРАНТ-----СДЕЛАТЬ ГРАНТ-----СДЕЛАТЬ ГРАНТ-----СДЕЛАТЬ ГРАНТ-----СДЕЛАТЬ ГРАНТ-----СДЕЛАТЬ ГРАНТ
-----grant select on v_cisu_stud_dol to mobile;
+----grant select on v_cisu_stud_education to mobile;
 
----------------------------------------------------------------------------------
-Create synonym Dol_edu for galreport.dol
+
+grant select on v_cisu_stud_education to mobile;
+/
+grant select on v_cisu_stud_appoiint2 to mobile;
+
+
 ---------------------------------------------------------------------
 
 -----------------------------------------------------------------------------Назначение студента
@@ -153,4 +157,15 @@ left outer join
     -- where O.fwMark is not null
 order by 1, 3, 2
 
---------------------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------Назначение студента(ДОП)---------------------------------
+create or replace view v_cisu_stud_appoiint2 as
+
+select FFIO,FUNS,FSDEPCODE,FSPOST,FCODEPROF,FSFINSOURCENAME,FSFACULTY,FSDEGREE from U_student
+ where 
+ to_oradate(fappdate)<=sysdate 
+--and  substr(ffio,1,length(replace('Якимчук Александр Васильевич','.','')))=replace('Якимчук Александр Васильевич','.','')  
+ and (to_oradate(fdisdate)>sysdate or fdisdate=0)
+ 
+ ----------------------------------------------------------------------------------------
+ 
+

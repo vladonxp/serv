@@ -1,7 +1,12 @@
 --ПРЕПОДАВАТЕЛИ
-grant select on mv_cisu_timetable to mobile;
-
-grant select on gala_rasp."Chair" to mobile;
+/-----СДЕЛАТЬ ГРАНТ-----СДЕЛАТЬ ГРАНТ-----СДЕЛАТЬ ГРАНТ-----СДЕЛАТЬ ГРАНТ-----СДЕЛАТЬ ГРАНТ-----СДЕЛАТЬ ГРАНТ
+   grant select on v_cisu_teac_caf to mobile;
+   /
+   grant select on v_cisu_teac_tel to mobile;
+   /
+   grant select on v_cisu_teac_kott to mobile;
+   /
+   grant select on v_cisu_teac_room to mobile;
 
 ----------------------------------------------------------------------------------CТАВКИ ПРЕПОДАВАТЕЛЯ(Кадровая информация о преподавателе)
 create materialized view mv_cisu_teach_appoint
@@ -60,6 +65,8 @@ FROM persons p inner join appointments a on a.fperson = p.fnrec
    and  A.fLprizn = 0       
    --and  p.ffio$UP LIKE 'БУРЛУЦКИЙ ВЛАДИМИР ВЛАДИМИРОВИЧ' 
    
+
+   
 ---------------------------------------------------------------------------СОТРУДНИКИ ПО КАФЕДРЕ
 Create or replace view V_CISU_TEAC_CAF as
 
@@ -91,10 +98,15 @@ select rownum rn, tab, fio, prof, frate, fcategory, datereg, fname, fbud, stavka
                 --  and prof='Кафедра иностранных языков'
                    ORDER BY fio   
 ---------------------------------------------------------------КОТТЕДЖИ--остаток-дата обновления
+
+create or replace view v_cisu_teac_kott as
+
 select * from Dol_kott 
 --where lower(substr(fio,1,length(replace('Якимчук Александр Васильевич','.',''))))=lower(replace('Якимчук Александр Васильевич','.',''))
 
 ---------------------------------------------------------------ОБЩЕЖИТИЯ
+create or replace view v_cisu_teac_room as
+
 select * from Dol_rab 
 --where lower(substr(fio,1,length(replace('Якимчук Александр Васильевич','.',''))))=lower(replace('Якимчук Александр Васильевич','.',''))
 
